@@ -47,7 +47,8 @@ COPY root /
 
 # Switch user to builder and configure build environment
 USER builder
-RUN git config --global user.name "$ABUILD_GIT_NAME" && \
+RUN cd /home/builder && \
+    git config --global user.name "$ABUILD_GIT_NAME" && \
     git config --global user.email "$ABUILD_GIT_EMAIL" && \
     git config --global color.ui true && \
     git config --global core.editor vim && \
@@ -58,7 +59,5 @@ RUN git config --global user.name "$ABUILD_GIT_NAME" && \
     git config --global sendemail.smtpencryption tls && \
     git config --global sendemail.suppresscc all && \
     git config --global sendemail.to alpine-aports@lists.alpinelinux.org && \
-    git clone git://git.alpinelinux.org/aports.git --depth 3
-
-# Set workdir to builder
-WORKDIR /home/builder
+    git clone git://git.alpinelinux.org/aports.git --depth 3 && \
+    abuild-keygen -a -i -n
