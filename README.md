@@ -37,34 +37,30 @@ Alternatively, you may build the Docker image from the
 
 ### Environment variables
 
-You can use two environment variables that will be recognized by the build script.
+You can use four environment variables that will be recognized by the build script.
 
-#### `alpine_package_build_PASSWORD`
+#### `ABUILD_GIT_NAME`
 
-If this environment variable is set, the string will be used as the password for the `root` user.
+If this environment variable is set, the string will be used to set the surname and lastname for the GIT user.
 
-#### `alpine_package_build_DEBUG`
+#### `ABUILD_GIT_EMAIL`
 
-If this environment variable is set, the scripts inside the container will run in debug mode.
+If this environment variable is set, the string will be used to set the email for the GIT user.
 
-### Start the alpine_package_build instance
+#### `ABUILD_GIT_SMTPSERVER`
 
-The instance can be started by the [start script](https://raw.githubusercontent.com/thbe/docker-alpine_package_build/master/start_alpine_package_build.sh)
-from GitHub:
+If this environment variable is set, the string will be used to set the smtp server for the email patch submission.
 
-```
-wget https://raw.githubusercontent.com/thbe/docker-alpine_package_build/master/start_alpine_package_build.sh
-export alpine_package_build_PASSWORD='SeCre!1'
-chmod 755 start_alpine_package_build.sh
-./start_alpine_package_build.sh
-```
+#### `ABUILD_GIT_SMTPUSER`
 
-### Check server status
+If this environment variable is set, the string will be used to set the user for the smtp server authentication.
 
-You can use the standard Docker commands to examine the status of the alpine_package_build instance:
+### Use the Alpine Package Build instance
+
+The instance can be used with the following start command:
 
 ```
-docker logs --tail 1000 --follow --timestamps alpine_package_build
+docker run --rm -ti local/alpine-package-builder /bin/sh
 ```
 
 ## Next steps
@@ -95,21 +91,18 @@ You can build the image also from source. To do this you have to clone the
 ```
 git clone https://github.com/thbe/docker-alpine_package_build.git
 cd docker-alpine_package_build
-docker build --rm --no-cache -t thbe/alpine_package_build .
-```
-
-### Bash shell inside container
-
-If you need a shell inside the container you can run the following command:
-
-```
-docker exec -ti alpine_package_build /bin/sh
+docker build --rm \
+             --build-arg ABUILD_GIT_NAME="Surname Lastname"
+             --build-arg ABUILD_GIT_EMAIL="user@domain.local"
+             --build-arg ABUILD_GIT_SMTPSERVER="smtp.domain.local"
+             --build-arg ABUILD_GIT_SMTPUSER="user@domain.local"
+             -t local/alpine-package-builder .
 ```
 
 ## Technical details
 
 - Alpine base image
-- alpine_package_build binary from official Alpine package repository
+- Alpine SDK
 
 ## Development
 

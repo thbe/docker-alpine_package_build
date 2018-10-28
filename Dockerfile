@@ -45,9 +45,6 @@ RUN apk update && \
 # Copy configuration files
 COPY root /
 
-# Set workdir to builder
-WORKDIR /home/builder
-
 # Switch user to builder and configure build environment
 USER builder
 RUN git config --global user.name "$ABUILD_GIT_NAME" && \
@@ -61,5 +58,9 @@ RUN git config --global user.name "$ABUILD_GIT_NAME" && \
     git config --global sendemail.smtpencryption tls && \
     git config --global sendemail.suppresscc all && \
     git config --global sendemail.to alpine-aports@lists.alpinelinux.org && \
-    cd ~ && \
+    cp /tmp/pre-commit /home/builder/.git/hooks/ && \
+    chmod 755 /home/builder/.git/hooks/pre-commit && \
     git clone git://git.alpinelinux.org/aports.git --depth 3
+
+# Set workdir to builder
+WORKDIR /home/builder
